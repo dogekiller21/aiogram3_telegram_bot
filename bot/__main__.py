@@ -13,6 +13,7 @@ from bot.commands.bot_commands import bot_commands
 
 
 from bot.db import Base, create_async_engine, get_session_maker, proceed_schemas
+from bot.middlewares.user_middleware import UserMiddleware
 
 
 async def main() -> None:
@@ -22,6 +23,9 @@ async def main() -> None:
     for command in bot_commands:
         commands_for_bot.append(BotCommand(command=command[0], description=command[1]))
     dp = Dispatcher()
+    dp.message.middleware(UserMiddleware)
+    dp.callback_query.middleware(UserMiddleware)
+
     bot = Bot(token=os.getenv("token"))
     await bot.set_my_commands(commands_for_bot)
     register_user_commands(dp)
@@ -38,7 +42,7 @@ async def main() -> None:
     async_engine = create_async_engine(url=pg_url)
     await proceed_schemas(engine=async_engine, metadata=Base.metadata)
 
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, session_maker=get_session_maker(engine=async_engine))
 
 
 if __name__ == "__main__":
