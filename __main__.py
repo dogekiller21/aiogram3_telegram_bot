@@ -23,8 +23,8 @@ async def main() -> None:
     for command in bot_commands:
         commands_for_bot.append(BotCommand(command=command[0], description=command[1]))
     dp = Dispatcher()
-    dp.message.middleware(UserMiddleware)
-    dp.callback_query.middleware(UserMiddleware)
+    dp.message.middleware(UserMiddleware())
+    dp.callback_query.middleware(UserMiddleware())
 
     bot = Bot(settings.BOT_TOKEN)
     await bot.set_my_commands(commands_for_bot)

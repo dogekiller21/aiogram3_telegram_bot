@@ -15,7 +15,7 @@ alembic = "^1.10.3"
 pydantic = {extras = ["dotenv"], version = "^1.10.7"}
 
 [tool.poetry.group.dev.dependencies]
-aiogram = "3.0b7"
+
 
 [build-system]
 requires = ["poetry-core"]
