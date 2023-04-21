@@ -10,6 +10,7 @@ def create_async_engine(url: Union[URL, str]) -> AsyncEngine:
     return sa_create_async_engine(url=url, echo=True, pool_pre_ping=True)
 
 
+@DeprecationWarning
 async def proceed_schemas(engine: AsyncEngine, metadata: MetaData) -> None:
     async with engine.begin() as conn:
         await conn.run_sync(metadata.create_all)

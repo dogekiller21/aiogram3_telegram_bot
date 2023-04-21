@@ -1,19 +1,19 @@
 import asyncio
 import logging
-import os
 from builtins import SystemExit
 
 from aiogram import Dispatcher, Bot
 from aiogram.types import BotCommand
-from sqlalchemy import URL
 
 from bot.commands import register_user_commands
 
 from bot.commands.bot_commands import bot_commands
 
-
-from bot.db import Base, create_async_engine, get_session_maker, proceed_schemas
+from bot.db import create_async_engine, get_session_maker
 from bot.middlewares.user_middleware import UserMiddleware
+from bot.config import get_settings
+
+settings = get_settings()
 
 
 async def main() -> None:
@@ -26,22 +26,10 @@ async def main() -> None:
     dp.message.middleware(UserMiddleware)
     dp.callback_query.middleware(UserMiddleware)
 
-    bot = Bot(token=os.getenv("token"))
+    bot = Bot(settings.BOT_TOKEN)
     await bot.set_my_commands(commands_for_bot)
     register_user_commands(dp)
-
-    pg_url = URL.create(
-        drivername="postgresql+asyncpg",
-        username=os.getenv("db_user"),
-        password=os.getenv("db_password"),
-        database=os.getenv("db_name"),
-        port=os.getenv("db_port"),
-        host=os.getenv("db_host")
-    )
-
-    async_engine = create_async_engine(url=pg_url)
-    await proceed_schemas(engine=async_engine, metadata=Base.metadata)
-
+    async_engine = create_async_engine(url=settings.DB_URL)
     await dp.start_polling(bot, session_maker=get_session_maker(engine=async_engine))
 
 
