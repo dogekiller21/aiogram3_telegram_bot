@@ -4,9 +4,9 @@ __all__ = ["register_user_commands", "bot_commands"]
 from aiogram import Router
 from aiogram.filters import CommandStart, Command, Text
 
-from bot.commands.help import help_command, help_func
-from bot.commands.settings import settings_command
-from bot.commands.start import start
+from bot.handlers.commands.settings_commands import settings_command
+from bot.handlers.commands.base_commands import start, help_command, help_func
+from bot.handlers.commands.commands_list import bot_commands
 
 
 def register_user_commands(router: Router) -> None:
